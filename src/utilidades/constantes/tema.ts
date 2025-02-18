@@ -1,0 +1,1 @@
+export const IBM_PLEX_SANS_FONT_FAMILY = 'IBM Plex Sans'
