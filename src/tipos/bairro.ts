@@ -1,8 +1,8 @@
 import { z } from "zod"
 
-export const neighborhoodSchema = z.object({
+export const bairroSchema = z.object({
     id: z.number(),
     nome: z.string()
 })
 
-export type NeighborhoodType = z.infer<typeof neighborhoodSchema>
+export type BairroType = z.infer<typeof bairroSchema>

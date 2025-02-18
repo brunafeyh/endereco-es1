@@ -72,7 +72,7 @@ export const theme = createTheme({
 					fontWeight: FONT_WEIGHTS.medium,
 					padding: '8px 16px',
 					color: `${UNIOESTE_COLORS.primary.p10}`,
-					backgroundColor: `${UNIOESTE_COLORS.error.p50}`,
+					backgroundColor: `${UNIOESTE_COLORS.primary.p60}`,
 					transition: 'all .2s',
 					borderRadius: 0,
 					border: 'none',
@@ -83,9 +83,6 @@ export const theme = createTheme({
 
 						height: '1.5rem',
 					},
-					'&:hover': {
-						backgroundColor: '#FFB79A',
-				},
 				},
 			},
 			variants: [
@@ -96,9 +93,8 @@ export const theme = createTheme({
 						opacity: '.5',
 						color: `${UNIOESTE_COLORS.primary.p60} !important`,
 						'& :is(p, span, strong, svg)': {
-							fill: UNIOESTE_COLORS.error.p50,
+							fill: UNIOESTE_COLORS.primary.p60,
 						},
-
 					},
 				},
 				{
@@ -117,10 +113,10 @@ export const theme = createTheme({
 				{
 					props: { variant: 'text' },
 					style: {
-						color: `${UNIOESTE_COLORS.error.p50}`,
+						color: `${UNIOESTE_COLORS.primary.p60}`,
 						backgroundColor: 'transparent',
 						'&:hover': {
-							backgroundColor: `${UNIOESTE_COLORS.error.p10}`,
+							backgroundColor: `${UNIOESTE_COLORS.primary.p10}`,
 						},
 					},
 				},
@@ -132,45 +128,23 @@ export const theme = createTheme({
 					width: '100%',
 					color: UNIOESTE_COLORS.primary?.p100,
 
-					'& label': {
-						color: UNIOESTE_COLORS.primary?.p100,
-						'&.MuiFormLabel-filled': {
-							color: UNIOESTE_COLORS.primary.p100,
+					'& .MuiFilledInput-root': {
+						backgroundColor: UNIOESTE_COLORS.neutral.p20,
+						'&:hover': {
+							backgroundColor: UNIOESTE_COLORS.neutral.p30,
 						},
-						'&.Mui-error': {
-							color: UNIOESTE_COLORS.error.p50,
-						},
-					},
-					'& .MuiInputLabel-root': {
-						fontSize: 14,
-					},
-					'&:hover label': {
-						color: UNIOESTE_COLORS.primary?.p100,
-
-						'&.Mui-error': {
-							color: UNIOESTE_COLORS.error.p50,
+						'&.Mui-focused': {
+							backgroundColor: UNIOESTE_COLORS.neutral.p30,
 						},
 					},
-					'& label.Mui-focused': { color: UNIOESTE_COLORS.primary.p60 },
-					'& .MuiOutlinedInput-root': {
-						width: '100%',
-
-						'&:hover fieldset': {
-							border: `solid 1px ${UNIOESTE_COLORS.primary.p100}`,
-						},
-						'&.Mui-focused fieldset': {
-							border: `solid 1px ${UNIOESTE_COLORS.primary?.p60}`,
-						},
-
-						'&.Mui-error': {
-							'& fieldset': {
-								border: `1px solid ${UNIOESTE_COLORS.error.p50} !important`,
-							},
-						},
+					'& .MuiFilledInput-underline:before': {
+						borderBottomColor: UNIOESTE_COLORS.neutral.p60,
 					},
-					'& .MuiFormHelperText-root': {
-						color: `${UNIOESTE_COLORS.error.p50} !important`,
-						marginLeft: 0,
+					'& .MuiFilledInput-underline:after': {
+						borderBottomColor: UNIOESTE_COLORS.primary.p60,
+					},
+					'& .MuiFormLabel-root': {
+						color: UNIOESTE_COLORS.neutral.p70,
 					},
 				},
 			},
@@ -200,9 +174,9 @@ export const theme = createTheme({
 			styleOverrides: {
 				root: {
 					width: '100%',
-					color: '#FFF',
+					color: UNIOESTE_COLORS.neutral.p10,
 					'& svg': {
-						color: '#FFF',
+						color: UNIOESTE_COLORS.neutral.p10,
 					},
 				},
 			},
@@ -235,12 +209,66 @@ export const theme = createTheme({
 		MuiMenuItem: {
 			styleOverrides: {
 				root: {
+					padding: '8px 16px',
+					fontSize: 16,
+					'&:hover': {
+						backgroundColor: UNIOESTE_COLORS.neutral.p20,
+					},
 					'&.Mui-selected': {
-						backgroundColor: UNIOESTE_COLORS.neutral.p40,
-						color: UNIOESTE_COLORS.neutral.p100,
+						backgroundColor: UNIOESTE_COLORS.neutral.p30,
+						color: UNIOESTE_COLORS.primary.p60,
+						fontWeight: 500,
 					},
 					'&.Mui-selected:hover': {
 						backgroundColor: UNIOESTE_COLORS.neutral.p30,
+					},
+					'&.Mui-focusVisible': {
+						outline: `2px solid ${UNIOESTE_COLORS.primary.p60}`,
+						outlineOffset: '-2px',
+					},
+				},
+			},
+		},
+		MuiToggleButton: {
+			styleOverrides: {
+				root: {
+					color: UNIOESTE_COLORS.neutral.p60,
+					fontWeight: FONT_WEIGHTS.extralight,
+					fontSize: 14,
+					height: 48,
+					width: 184,
+					gap: '16px',
+					border: 'none',
+					paddingLeft: 24,
+					outline: 'none',
+					'&:focus': {
+						outline: 'none',
+						boxShadow: 'none',
+					},
+					textTransform: 'none',
+					'@media (min-width: 1500px) and (max-width: 2900px)': {
+						fontSize: 15,
+						height: 50,
+						width: 200,
+					},
+					'&.Mui-selected': {
+						backgroundColor: UNIOESTE_COLORS.neutral.p10,
+						color: UNIOESTE_COLORS.primary.p50,
+						borderLeft: `4px solid ${UNIOESTE_COLORS.primary.p50}`,
+						fontWeight: FONT_WEIGHTS.medium,
+						paddingLeft: 20,
+						fontSize: 14,
+						'@media (min-width: 1500px) and (max-width: 2900px)': {
+							fontSize: 15,
+							height: 50,
+							width: 200,
+						},
+						'&:hover': {
+							backgroundColor: UNIOESTE_COLORS.neutral.p20,
+						},
+					},
+					'&:hover': {
+						backgroundColor: UNIOESTE_COLORS.neutral.p20,
 					},
 				},
 			},

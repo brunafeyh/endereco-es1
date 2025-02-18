@@ -15,7 +15,7 @@ const ViewContainer: React.FC<Props> = ({ children, ...attrs }) => {
 			rowGap={2}
 			paddingTop={theme.spacing(4)}
 			paddingBottom={4}
-			marginLeft={theme.spacing(3)}
+			marginLeft={theme.spacing(30)}
 			marginRight={theme.spacing(3)}
 			component="main"
 			{...attrs}

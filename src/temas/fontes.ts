@@ -1,9 +1,9 @@
 import { Font, FontWeight } from '../tipos/tema'
-import ibmPlexSansBold from '../assets/fonts/ibm-plex-sans-bold.ttf'
-import ibmPlexSansExtraLight from '../assets/fonts/ibm-plex-sans-extra-light.ttf'
-import ibmPlexSansLight from '../assets/fonts/ibm-plex-sans-light.ttf'
-import ibmPlexSansMedium from '../assets/fonts/ibm-plex-sans-medium.ttf'
-import ibmPlexSansRegular from '../assets/fonts/ibm-plex-sans-regular.ttf'
+import ibmPlexSansBold from '../espolio/fontes/ibm-plex-sans-bold.ttf'
+import ibmPlexSansExtraLight from '../espolio/fontes/ibm-plex-sans-extra-light.ttf'
+import ibmPlexSansLight from '../espolio/fontes/ibm-plex-sans-light.ttf'
+import ibmPlexSansMedium from '../espolio/fontes/ibm-plex-sans-medium.ttf'
+import ibmPlexSansRegular from '../espolio/fontes/ibm-plex-sans-regular.ttf'
 import { IBM_PLEX_SANS_FONT_FAMILY } from '../utilidades/constantes/tema'
 
 interface CreateFontFaceProps {
