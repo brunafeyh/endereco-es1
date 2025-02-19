@@ -20,7 +20,7 @@ import { TrashCan } from "@carbon/icons-react";
 import { UNIOESTE_COLORS } from "../temas/cores";
 
 const PaginaCriarPaciente: React.FC = () => {
-  const { criarPaciente } = usarPacienteMutations();
+  const { criarPaciente } = usarPacienteMutations()
   const theme = useTheme();
   const {
     register,
