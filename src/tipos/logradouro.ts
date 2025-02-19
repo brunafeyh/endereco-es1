@@ -7,4 +7,4 @@ export const logradouroSchema = z.object({
    tipoLogradouro: tipodeLogradouroSchema
 })
 
-export type TipodeTipodeLogradouro = z.infer<typeof tipodeLogradouroSchema>
+export type LogradouroTipo = z.infer<typeof logradouroSchema>

@@ -1,5 +1,5 @@
 import { ChangeEvent, FC, ReactNode } from 'react'
-import { Table as MuiTable, Paper, TableBody } from '@mui/material'
+import { CircularProgress, Table as MuiTable, Paper, TableBody } from '@mui/material'
 import {
 	EmptyTableTitle,
 	TableCellBody,
@@ -10,6 +10,7 @@ import {
 	TableRowHead,
 } from './styles'
 import { usarParametrosdePaginacao } from '../../hooks/params/pagination'
+import { UNIOESTE_COLORS } from '../../temas/cores'
 
 export interface Column {
 	field: string
@@ -21,9 +22,11 @@ interface TableProps {
 	data: Record<string, any>[]
 	totalRows: number
 	renderData: (row: Record<string, any>, columns: Column[]) => ReactNode
+	error?: Error | null
+	isLoading?: boolean
 }
 
-const Tabela: FC<TableProps> = ({ columns, data, totalRows, renderData }) => {
+const Tabela: FC<TableProps> = ({ columns, data, totalRows, renderData, error, isLoading }) => {
 	const { page, pageSize, changePage, changePageSize } = usarParametrosdePaginacao()
 	const rowsPerPageOptions = [5, 10, 15, 20]
 	const isNextPageDisabled = totalRows <= (page + 1) * pageSize
@@ -47,10 +50,14 @@ const Tabela: FC<TableProps> = ({ columns, data, totalRows, renderData }) => {
 					</TableRowHead>
 				</TableHead>
 				<TableBody>
-					{data.length === 0 ? (
+
+					{data.length === 0 || error ? (
 						<TableRowBody>
 							<TableCellBody colSpan={columns.length}>
-								<EmptyTableTitle>Não foi possível encontrar nenhum registro</EmptyTableTitle>
+								{isLoading ? (
+									<CircularProgress sx={{ color: UNIOESTE_COLORS.primary.p60 }} />
+								) : <EmptyTableTitle>{error ? 'Erro ao receber registrs' : 'Não foi possível encontrar nenhum registro'}</EmptyTableTitle>}
+
 							</TableCellBody>
 						</TableRowBody>
 					) : (

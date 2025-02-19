@@ -7,4 +7,4 @@ export const cidadeSchema = z.object({
   unidadeFederativa: unidadeFederativaSchema
 })
 
-export type UnidadeFedrativaTipo = z.infer<typeof cidadeSchema>
+export type CidadeTipo = z.infer<typeof cidadeSchema>

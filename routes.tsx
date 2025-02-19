@@ -1,11 +1,11 @@
 import { createBrowserRouter } from 'react-router-dom'
-import { PaginadeCadastrodeEndereco } from './src/pages/cadastro-endereco'
-import { PaginadeBuscadeEnderecoporCep } from './src/pages/busca-endereco-cep'
-import { PaginadeBuscadeEnderecoporId } from './src/pages/busca-endereco-id'
-import { PaginadeRegistroDePaciente } from './src/pages/paciente'
-import { PaginadeBuscaDeEnderecoExterno } from './src/pages/endereco-externo'
-import { PaginadeBuscadePacientePorId } from './src/pages/busca-paciente'
-import { BuscadeCidadePage } from './src/pages/busca-cidade-por-id'
+import { PaginadeCadastrodeEndereco } from './src/paginas/cadastro-endereco'
+import { PaginadeBuscadeEnderecoporCep } from './src/paginas/busca-endereco-cep'
+import { PaginadeBuscadeEnderecoporId } from './src/paginas/busca-endereco-id'
+import { PaginadeBuscadeEnderecoExterno } from './src/paginas/endereco-externo'
+import { PaginadeBuscadePacienteporId } from './src/paginas/busca-paciente'
+import { BuscadeCidadePage } from './src/paginas/busca-cidade-por-id'
+import PaginaCriarPaciente from './src/paginas/paciente'
 
 export const router = createBrowserRouter([
 	{
@@ -17,7 +17,7 @@ export const router = createBrowserRouter([
 			},
 			{
 				path: 'registro-paciente',
-				element: <PaginadeRegistroDePaciente />,
+				element: <PaginaCriarPaciente />,
 			},
 			{
 				path: 'endereco-por-cep',
@@ -29,11 +29,11 @@ export const router = createBrowserRouter([
 			},
 			{
 				path: 'endereco-externo',
-				element: <PaginadeBuscaDeEnderecoExterno />,
+				element: <PaginadeBuscadeEnderecoExterno />,
 			},
 			{
 				path: 'busca-paciente',
-				element: <PaginadeBuscadePacientePorId />,
+				element: <PaginadeBuscadePacienteporId />,
 			},
 			{
 				path: 'obter-cidade',
