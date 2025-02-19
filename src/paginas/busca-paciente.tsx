@@ -46,7 +46,7 @@ export const PaginadeBuscadePacienteporId: FC = () => {
             <Box marginLeft={30}>
                 <Typography
                     mb={2}
-                    fontSize={theme.spacing(2)}
+                    fontSize={theme.spacing(2.5)}
                     fontWeight={FONT_WEIGHTS.light}
                 >
                     {TITULO}

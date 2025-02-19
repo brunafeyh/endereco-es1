@@ -7,7 +7,7 @@ import { useMutation } from "@tanstack/react-query";
 import { EnderecoTipo } from "../tipos/endereco";
 import EnderecoService from "../servicos/endereco";
 
-const TITULO = "Buscar Endereço por ID"
+const TITULO = "Buscar Endereço Externo"
 
 export const PaginadeBuscadeEnderecoExterno: FC = () => {
     const theme = useTheme()
@@ -35,7 +35,7 @@ export const PaginadeBuscadeEnderecoExterno: FC = () => {
     return (
         <PageLayout title={TITULO}>
             <Box marginLeft={30}>
-                <Typography mb={2} fontSize={theme.spacing(2)} fontWeight={FONT_WEIGHTS.light}>
+                <Typography mb={2} fontSize={theme.spacing(2.5)} fontWeight={FONT_WEIGHTS.light}>
                     {TITULO}
                 </Typography>
                 <Grid container spacing={2} alignItems="center" sx={{ mb: 3 }}>

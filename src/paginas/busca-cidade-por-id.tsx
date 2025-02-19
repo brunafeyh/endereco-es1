@@ -35,7 +35,7 @@ export const BuscadeCidadePage: FC = () => {
     return (
         <PageLayout title={title}>
             <Box ml={40}>
-                <Typography mb={2} fontSize={theme.spacing(2)} fontWeight={FONT_WEIGHTS.light}>
+                <Typography mb={2} fontSize={theme.spacing(2.5)} fontWeight={FONT_WEIGHTS.light}>
                     {title}
                 </Typography>
 

@@ -60,7 +60,7 @@ export const PaginadeBuscadeEnderecoporCep: FC = () => {
       <Box marginLeft={20}>
         <Typography
           mb={2}
-          fontSize={theme.spacing(2)}
+          fontSize={theme.spacing(2.5)}
           fontWeight={FONT_WEIGHTS.light}
         >
           {TITULO}

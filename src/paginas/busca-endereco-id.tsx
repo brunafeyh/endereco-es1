@@ -35,7 +35,7 @@ export const PaginadeBuscadeEnderecoporId: FC = () => {
     return (
         <PageLayout title={TITULO}>
             <Box marginLeft={30}>
-                <Typography mb={2} fontSize={theme.spacing(2)} fontWeight={FONT_WEIGHTS.light}>
+                <Typography mb={2} fontSize={theme.spacing(2.5)} fontWeight={FONT_WEIGHTS.light}>
                     {TITULO}
                 </Typography>
                 <Grid container spacing={2} alignItems="center" sx={{ mb: 3 }}>
