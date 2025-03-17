@@ -6,6 +6,11 @@ import { PaginadeBuscadeEnderecoExterno } from './src/paginas/endereco-externo'
 import { PaginadeBuscadePacienteporId } from './src/paginas/busca-paciente'
 import { BuscadeCidadePage } from './src/paginas/busca-cidade-por-id'
 import PaginaCriarPaciente from './src/paginas/paciente'
+import { CadastroMedicamento } from './src/paginas/cadastro-medicamento'
+import { CadastroDiagnosticoCID } from './src/paginas/cadastro-diagnostico-cid'
+import { CadastroMedico } from './src/paginas/cadastro-medico'
+import { BuscarReceitasMedicas } from './src/paginas/buscar-receita-medica'
+import { CadastroReceitaMedica } from './src/paginas/cadastro-receita-medica'
 
 export const router = createBrowserRouter([
 	{
@@ -38,6 +43,26 @@ export const router = createBrowserRouter([
 			{
 				path: 'obter-cidade',
 				element: <BuscadeCidadePage />,
+			},
+			{
+				path: 'cadastro-medicamento',
+				element: <CadastroMedicamento />,
+			},
+			{
+				path: 'cadastro-diagnostico-cid',
+				element: <CadastroDiagnosticoCID />,
+			},
+			{
+				path: 'cadastro-medico',
+				element: <CadastroMedico />,
+			},
+			{
+				path: 'cadastro-receita-medica',
+				element: <CadastroReceitaMedica />,
+			},
+			{
+				path: 'buscar-receitas-medicas',
+				element: <BuscarReceitasMedicas />,
 			},
 		],
 	},

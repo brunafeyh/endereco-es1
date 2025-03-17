@@ -27,6 +27,16 @@ const menuItems = [
 			{ text: 'Buscar', route: '/busca-paciente' },
 		],
 	},
+	{ text: 'Cadastrar medicamento', route: '/cadastro-medicamento' },
+	{ text: 'Cadastro diagnóstico CID', route: '/cadastro-diagnostico-cid' },
+	{ text: 'Cadastro Médico', route: '/cadastro-medico' },
+	{
+		text: 'Receita Médica',
+		children: [
+			{ text: 'Cadastrar', route: '/cadastro-receita-medica' },
+			{ text: 'Buscar', route: '/buscar-receitas-medicas' },
+		],
+	},
 ]
 
 export const PageLayout: FC<PropsWithChildren<Props>> = ({ title, children }) => {
