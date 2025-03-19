@@ -11,6 +11,8 @@ import { CadastroDiagnosticoCID } from './src/paginas/cadastro-diagnostico-cid'
 import { CadastroMedico } from './src/paginas/cadastro-medico'
 import { BuscarReceitasMedicas } from './src/paginas/buscar-receita-medica'
 import { CadastroReceitaMedica } from './src/paginas/cadastro-receita-medica'
+import { DetalhesReceitaMedica } from './src/paginas/detalhes-receita-medica'
+import { IA } from './src/paginas/ia'
 
 export const router = createBrowserRouter([
 	{
@@ -63,6 +65,14 @@ export const router = createBrowserRouter([
 			{
 				path: 'buscar-receitas-medicas',
 				element: <BuscarReceitasMedicas />,
+			},
+			{
+				path: 'detalhes-receita-medica/:id',
+				element: <DetalhesReceitaMedica />,
+			},
+			{
+				path: 'ia',
+				element: <IA />,
 			},
 		],
 	},

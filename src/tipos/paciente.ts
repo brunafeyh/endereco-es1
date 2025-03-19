@@ -40,6 +40,16 @@ export const pacienteSchema = z.object({
 
 export type PacienteTipo = z.infer<typeof pacienteSchema>
 
+export const pacientSchema = z.object({
+    sexo: sexoSchema,
+    cpf: cpfSchema,
+    id: z.number(),
+    nome: z.string(),
+    emails: z.array(emailSchema),
+});
+
+export type Paciente = z.infer<typeof pacientSchema>;
+
 export const medicoSchema = z.object({
     id: z.number(),
     nome: z.string(),

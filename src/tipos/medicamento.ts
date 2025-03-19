@@ -5,3 +5,10 @@ export const medicamentoSchema = z.object({
 })
 
 export type Medicamento = z.infer<typeof medicamentoSchema>
+
+export const medicamentoListSchema = z.object({
+    id: z.number(),
+    nome: z.string()
+})
+
+export type MedicamentoList = z.infer<typeof medicamentoListSchema>

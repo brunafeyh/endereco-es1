@@ -36,7 +36,6 @@ export const PaginadeBuscadeEnderecoporCep: FC = () => {
     const theme = useTheme();
     const [cep, setCep] = useState<string>("");
     const [enderecos, setEnderecos] = useState<EnderecoTipo[]>([]);
-    console.log(enderecos);
 
     const service = new EnderecoService();
 

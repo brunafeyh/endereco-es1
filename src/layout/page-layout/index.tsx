@@ -37,6 +37,7 @@ const menuItems = [
 			{ text: 'Buscar', route: '/buscar-receitas-medicas' },
 		],
 	},
+	{ text: 'Inteligência Artificial', route: '/ia' },
 ]
 
 export const PageLayout: FC<PropsWithChildren<Props>> = ({ title, children }) => {

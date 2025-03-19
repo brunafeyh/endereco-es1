@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm, useFieldArray, Controller } from "react-hook-form";
 import {
     Box,
@@ -7,18 +7,20 @@ import {
     TextField,
     Typography,
 } from "@mui/material";
-import { usarMedicoMutations } from "../../../hooks/usa-medico-mutations";
 import { Medico } from "../../../tipos/paciente";
-import { usarSexos } from "../../../hooks/usar-sexos";
-import { usarDDDs } from "../../../hooks/usar-ddds";
-import { usarDDIs } from "../../../hooks/usar-ddis";
-import EnderecoService from "../../../servicos/endereco";
 import { FONT_WEIGHTS } from "../../../temas/fontes";
 import { TrashCan } from "@carbon/icons-react";
 import { UNIOESTE_COLORS } from "../../../temas/cores";
+import { usarDDDs } from "../../../hooks/telefone/usar-ddds";
+import { usarDDIs } from "../../../hooks/telefone/usar-ddis";
+import { usarMedicoMutations } from "../../../hooks/medico/usa-medico-mutations";
+import { EnderecoTipo } from "../../../tipos/endereco";
+import { useMutation } from "@tanstack/react-query";
+import EnderecoService from "../../../servicos/endereco"; // Importando o serviço de endereço
+import { usarSexos } from "../../../hooks/usar-sexos";
 
 const FormularioCadastroMedico: React.FC = () => {
-    const { criarMedico } = usarMedicoMutations()
+    const { criarMedico } = usarMedicoMutations();
     const {
         register,
         control,
@@ -28,19 +30,11 @@ const FormularioCadastroMedico: React.FC = () => {
         watch,
     } = useForm<Medico>();
 
-    const {
-        fields: telefoneFields,
-        append: appendTelefone,
-        remove: removeTelefone,
-    } = useFieldArray({
+    const { fields: telefoneFields, append: appendTelefone, remove: removeTelefone } = useFieldArray({
         control,
         name: "telefones",
     });
-    const {
-        fields: emailFields,
-        append: appendEmail,
-        remove: removeEmail,
-    } = useFieldArray({
+    const { fields: emailFields, append: appendEmail, remove: removeEmail } = useFieldArray({
         control,
         name: "emails",
     });
@@ -48,6 +42,27 @@ const FormularioCadastroMedico: React.FC = () => {
     const { data: sexos } = usarSexos();
     const { data: ddds } = usarDDDs();
     const { data: ddis } = usarDDIs();
+
+    const [cep, setCep] = useState<string>("");
+    const [enderecos, setEnderecos] = useState<EnderecoTipo[]>([]);
+
+    const service = new EnderecoService();
+
+    const mutation = useMutation<EnderecoTipo[], Error, string>({
+        mutationFn: (cep) => service.listarEnderecosCEP(cep),
+        onSuccess: (data) => {
+            setEnderecos(data);
+        },
+        onError: (error) => {
+            console.error("Erro ao buscar endereços:", error);
+            setEnderecos([]);
+        },
+    });
+
+    const handleBuscar = () => {
+        if (!cep) return;
+        mutation.mutate(cep);
+    };
 
     const handleSexoChange = (
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -60,247 +75,261 @@ const FormularioCadastroMedico: React.FC = () => {
         }
     };
 
-    const handleEnderecoIdChange = async (
-        event: React.FocusEvent<HTMLInputElement>
-    ) => {
-        const idInput = event.target.value;
-        if (!idInput) return;
-        const enderecoId = parseInt(idInput, 10);
-        if (isNaN(enderecoId)) return;
-
-        try {
-            const enderecoService = new EnderecoService();
-            let endereco = await enderecoService.obterEnderecoID(enderecoId);
-            setValue("enderecoEspecifico.endereco", endereco);
-        } catch (error) {
-            console.error("Erro ao buscar endereço:", error);
+    // Função para armazenar o id do endereço selecionado
+    const handleEnderecoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const enderecoId = event.target.value;
+        const selectedEndereco = enderecos.find(end => end.id === parseInt(enderecoId));
+        if (selectedEndereco) {
+            setValue("enderecoEspecifico.endereco", selectedEndereco); // Armazenando o endereço selecionado
         }
-    }
+    };
 
     const onSubmit = async (data: Medico) => {
         console.log("Medico cadastrado:", data);
         try {
-            criarMedico.mutateAsync(data)
+            await criarMedico.mutateAsync(data);
         } catch (err) {
-            console.log(err)
+            console.log(err);
         }
-    }
-
-    const { onChange: sexoOnChange, ...sexoRegister } = register("sexo.sigla");
+    };
 
     return (
-            <Box component="form" onSubmit={handleSubmit(onSubmit)}>
-                <TextField
-                    label="Nome"
-                    fullWidth
-                    variant="filled"
-                    sx={{ mb: 2 }}
-                    {...register("nome")}
-                    error={!!errors.nome}
-                    helperText={errors.nome?.message}
-                />
+        <Box component="form" onSubmit={handleSubmit(onSubmit)}>
+            <TextField
+                label="Nome"
+                fullWidth
+                variant="filled"
+                sx={{ mb: 2 }}
+                {...register("nome")}
+                error={!!errors.nome}
+                helperText={errors.nome?.message}
+            />
 
-                <TextField
-                    label="CPF"
-                    fullWidth
-                    variant="filled"
-                    sx={{ mb: 2 }}
-                    {...register("cpf.cpf")}
-                    error={!!errors.cpf?.cpf}
-                    helperText={errors.cpf?.cpf?.message}
-                />
+            <TextField
+                label="CPF"
+                fullWidth
+                variant="filled"
+                sx={{ mb: 2 }}
+                {...register("cpf.cpf")}
+                error={!!errors.cpf?.cpf}
+                helperText={errors.cpf?.cpf?.message}
+            />
 
-<TextField
-                    label="CRM"
-                    fullWidth
-                    variant="filled"
-                    sx={{ mb: 2 }}
-                    {...register("crm.crm")}
-                    error={!!errors.crm?.crm}
-                    helperText={errors.crm?.crm?.message}
-                />
+            <TextField
+                label="CRM"
+                fullWidth
+                variant="filled"
+                sx={{ mb: 2 }}
+                {...register("crm.crm")}
+                error={!!errors.crm?.crm}
+                helperText={errors.crm?.crm?.message}
+            />
 
-                <Typography fontSize={15} fontWeight={FONT_WEIGHTS.light} mt={2} mb={1}>
-                    Endereço Específico
-                </Typography>
-                <TextField
-                    label="Número"
-                    fullWidth
-                    variant="filled"
-                    sx={{ mb: 2 }}
-                    {...register("enderecoEspecifico.numero")}
-                    error={!!errors.enderecoEspecifico?.numero}
-                    helperText={errors.enderecoEspecifico?.numero?.message}
-                />
-                <TextField
-                    label="Complemento"
-                    fullWidth
-                    variant="filled"
-                    sx={{ mb: 2 }}
-                    {...register("enderecoEspecifico.complemento")}
-                    error={!!errors.enderecoEspecifico?.complemento}
-                    helperText={errors.enderecoEspecifico?.complemento?.message}
-                />
-                <TextField
-                    label="ID do Endereço"
-                    fullWidth
-                    variant="filled"
-                    sx={{ mb: 2 }}
-                    onBlur={handleEnderecoIdChange}
-                    helperText="Digite o ID do endereço e saia do campo para buscar"
-                />
+            <Typography fontSize={15} fontWeight={FONT_WEIGHTS.light} mt={2} mb={1}>
+                Endereço Específico
+            </Typography>
+            <TextField
+                label="Número"
+                fullWidth
+                variant="filled"
+                sx={{ mb: 2 }}
+                {...register("enderecoEspecifico.numero")}
+                error={!!errors.enderecoEspecifico?.numero}
+                helperText={errors.enderecoEspecifico?.numero?.message}
+            />
+            <TextField
+                label="Complemento"
+                fullWidth
+                variant="filled"
+                sx={{ mb: 2 }}
+                {...register("enderecoEspecifico.complemento")}
+                error={!!errors.enderecoEspecifico?.complemento}
+                helperText={errors.enderecoEspecifico?.complemento?.message}
+            />
 
-                <Typography fontSize={15} fontWeight={FONT_WEIGHTS.light} mt={2} mb={1}>
-                    Sexo
-                </Typography>
+            {/* CEP */}
+            <Box display="flex" gap={2} mb={2}>
+                <TextField
+                    label="CEP"
+                    variant="filled"
+                    value={cep}
+                    onChange={(e) => setCep(e.target.value)}
+                />
+                <Button
+                    variant="contained"
+                    onClick={handleBuscar}
+                    disabled={!cep || mutation.isPending}
+                >
+                    Buscar
+                </Button>
+            </Box>
+
+            {/* Select para escolher o endereço */}
+            {enderecos.length > 0 && (
                 <TextField
                     select
-                    label="Sexo"
+                    label="Selecione o Endereço"
                     fullWidth
-                    sx={{ mb: 2 }}
                     variant="filled"
-                    {...sexoRegister}
-                    error={!!errors.sexo?.sigla}
-                    helperText={errors.sexo?.sigla?.message}
-                    value={watch("sexo.sigla") || ""}
-                    onChange={(e) => {
-                        sexoOnChange(e)
-                        handleSexoChange(e)
-                    }}
+                    sx={{ mb: 2 }}
+                    onChange={handleEnderecoChange}
                 >
-                    <MenuItem value="">Selecione Sexo</MenuItem>
-                    {sexos?.map((s) => (
-                        <MenuItem key={s.sigla} value={s.sigla}>
-                            {s.nome}
+                    {enderecos.map((endereco) => (
+                        <MenuItem key={endereco.id} value={endereco.id}>
+                            {`${endereco.logradouro.nome}, ${endereco.bairro.nome} - ${endereco.cidade.nome}`}
                         </MenuItem>
                     ))}
                 </TextField>
+            )}
 
-                <Typography fontSize={15} fontWeight={FONT_WEIGHTS.light} mt={2} mb={1}>
-                    Telefones
-                </Typography>
-                {telefoneFields.map((field, index) => (
-                    <Box key={field.id} display="flex" gap={2} mb={2}>
-                        <TextField
-                            variant="filled"
-                            label="Número"
-                            fullWidth
-                            {...register(`telefones.${index}.numero` as const)}
-                            error={!!errors.telefones?.[index]?.numero}
-                            helperText={errors.telefones?.[index]?.numero?.message}
-                        />
-                        <Controller
-                            name={`telefones.${index}.ddd`}
-                            control={control}
-                            defaultValue={{} as any}
-                            render={({ field }) => (
-                                <TextField
-                                    select
-                                    variant="filled"
-                                    label="DDD"
-                                    fullWidth
-                                    value={field.value?.numeroDDD || ""}
-                                    onChange={(e) => {
-                                        const selectedValue = e.target.value;
-                                        const selectedDDD = ddds?.find(
-                                            (ddd) => ddd.numeroDDD === Number(selectedValue)
-                                        );
-                                        field.onChange(selectedDDD);
-                                    }}
-                                    error={!!errors.telefones?.[index]?.ddd?.numeroDDD}
-                                    helperText={errors.telefones?.[index]?.ddd?.numeroDDD?.message}
-                                >
-                                    <MenuItem value="">Selecione DDD</MenuItem>
-                                    {ddds?.map((ddd) => (
-                                        <MenuItem key={ddd.numeroDDD} value={ddd.numeroDDD}>
-                                            {ddd.numeroDDD}
-                                        </MenuItem>
-                                    ))}
-                                </TextField>
-                            )}
-                        />
-                        <Controller
-                            name={`telefones.${index}.ddi`}
-                            control={control}
-                            defaultValue={{} as any}
-                            render={({ field }) => (
-                                <TextField
-                                    select
-                                    variant="filled"
-                                    label="DDI"
-                                    fullWidth
-                                    value={field.value?.numeroDDI || ""}
-                                    onChange={(e) => {
-                                        const selectedValue = e.target.value;
-                                        const selectedDDI = ddis?.find(
-                                            (ddi) => ddi.numeroDDI === Number(selectedValue)
-                                        );
-                                        field.onChange(selectedDDI);
-                                    }}
-                                    error={!!errors.telefones?.[index]?.ddi?.numeroDDI}
-                                    helperText={errors.telefones?.[index]?.ddi?.numeroDDI?.message}
-                                >
-                                    <MenuItem value="">Selecione DDI</MenuItem>
-                                    {ddis?.map((ddi) => (
-                                        <MenuItem key={ddi.numeroDDI} value={ddi.numeroDDI}>
-                                            {ddi.numeroDDI}
-                                        </MenuItem>
-                                    ))}
-                                </TextField>
-                            )}
-                        />
-                        <Button variant="text" color="error" onClick={() => removeTelefone(index)}>
-                            <TrashCan color={UNIOESTE_COLORS.primary.p60} />
-                        </Button>
-                    </Box>
+            <Typography fontSize={15} fontWeight={FONT_WEIGHTS.light} mt={2} mb={1}>
+                Sexo
+            </Typography>
+            <TextField
+                select
+                label="Sexo"
+                fullWidth
+                sx={{ mb: 2 }}
+                variant="filled"
+                {...register("sexo.sigla")}
+                error={!!errors.sexo?.sigla}
+                helperText={errors.sexo?.sigla?.message}
+                value={watch("sexo.sigla") || ""}
+                onChange={handleSexoChange}
+            >
+                <MenuItem value="">Selecione Sexo</MenuItem>
+                {sexos?.map((s) => (
+                    <MenuItem key={s.sigla} value={s.sigla}>
+                        {s.nome}
+                    </MenuItem>
                 ))}
-                <Button
-                    variant="contained"
-                    onClick={() =>
-                        appendTelefone({
-                            numero: "",
-                            ddd: { numeroDDD: "" as any },
-                            ddi: { numeroDDI: "" as any },
-                        })
-                    }
-                    sx={{ mb: 2 }}
-                >
-                    Adicionar Telefone
-                </Button>
+            </TextField>
 
-                <Typography fontSize={15} fontWeight={FONT_WEIGHTS.light} mt={2} mb={1}>
-                    Emails
-                </Typography>
-                {emailFields.map((field, index) => (
-                    <Box key={field.id} display="flex" gap={2} mb={2}>
-                        <TextField
-                            label="Email"
-                            fullWidth
-                            variant="filled"
-                            {...register(`emails.${index}.email` as const)}
-                            error={!!errors.emails?.[index]?.email}
-                            helperText={errors.emails?.[index]?.email?.message}
-                        />
-                        <Button variant="text" color="error" onClick={() => removeEmail(index)}>
-                            <TrashCan color={UNIOESTE_COLORS.primary.p60} />
-                        </Button>
-                    </Box>
-                ))}
-                <Button
-                    variant="contained"
-                    onClick={() => appendEmail({ email: "" })}
-                    sx={{ mb: 2 }}
-                >
-                    Adicionar Email
-                </Button>
-
-                <Box mt={4}>
-                    <Button type="submit" variant="contained" fullWidth>
-                        Cadastrar Médico
+            <Typography fontSize={15} fontWeight={FONT_WEIGHTS.light} mt={2} mb={1}>
+                Telefones
+            </Typography>
+            {telefoneFields.map((field, index) => (
+                <Box key={field.id} display="flex" gap={2} mb={2}>
+                    <TextField
+                        variant="filled"
+                        label="Número"
+                        fullWidth
+                        {...register(`telefones.${index}.numero` as const)}
+                        error={!!errors.telefones?.[index]?.numero}
+                        helperText={errors.telefones?.[index]?.numero?.message}
+                    />
+                    <Controller
+                        name={`telefones.${index}.ddd`}
+                        control={control}
+                        defaultValue={{} as any}
+                        render={({ field }) => (
+                            <TextField
+                                select
+                                variant="filled"
+                                label="DDD"
+                                fullWidth
+                                value={field.value?.numeroDDD || ""}
+                                onChange={(e) => {
+                                    const selectedValue = e.target.value;
+                                    const selectedDDD = ddds?.find(
+                                        (ddd) => ddd.numeroDDD === Number(selectedValue)
+                                    );
+                                    field.onChange(selectedDDD);
+                                }}
+                                error={!!errors.telefones?.[index]?.ddd?.numeroDDD}
+                                helperText={errors.telefones?.[index]?.ddd?.numeroDDD?.message}
+                            >
+                                <MenuItem value="">Selecione DDD</MenuItem>
+                                {ddds?.map((ddd) => (
+                                    <MenuItem key={ddd.numeroDDD} value={ddd.numeroDDD}>
+                                        {ddd.numeroDDD}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
+                        )}
+                    />
+                    <Controller
+                        name={`telefones.${index}.ddi`}
+                        control={control}
+                        defaultValue={{} as any}
+                        render={({ field }) => (
+                            <TextField
+                                select
+                                variant="filled"
+                                label="DDI"
+                                fullWidth
+                                value={field.value?.numeroDDI || ""}
+                                onChange={(e) => {
+                                    const selectedValue = e.target.value;
+                                    const selectedDDI = ddis?.find(
+                                        (ddi) => ddi.numeroDDI === Number(selectedValue)
+                                    );
+                                    field.onChange(selectedDDI);
+                                }}
+                                error={!!errors.telefones?.[index]?.ddi?.numeroDDI}
+                                helperText={errors.telefones?.[index]?.ddi?.numeroDDI?.message}
+                            >
+                                <MenuItem value="">Selecione DDI</MenuItem>
+                                {ddis?.map((ddi) => (
+                                    <MenuItem key={ddi.numeroDDI} value={ddi.numeroDDI}>
+                                        {ddi.numeroDDI}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
+                        )}
+                    />
+                    <Button variant="text" color="error" onClick={() => removeTelefone(index)}>
+                        <TrashCan color={UNIOESTE_COLORS.primary.p60} />
                     </Button>
                 </Box>
+            ))}
+            <Button
+                variant="contained"
+                onClick={() =>
+                    appendTelefone({
+                        numero: "",
+                        ddd: { numeroDDD: "" as any },
+                        ddi: { numeroDDI: "" as any },
+                    })
+                }
+                sx={{ mb: 2 }}
+            >
+                Adicionar Telefone
+            </Button>
+
+            <Typography fontSize={15} fontWeight={FONT_WEIGHTS.light} mt={2} mb={1}>
+                Emails
+            </Typography>
+            {emailFields.map((field, index) => (
+                <Box key={field.id} display="flex" gap={2} mb={2}>
+                    <TextField
+                        label="Email"
+                        fullWidth
+                        variant="filled"
+                        {...register(`emails.${index}.email` as const)}
+                        error={!!errors.emails?.[index]?.email}
+                        helperText={errors.emails?.[index]?.email?.message}
+                    />
+                    <Button variant="text" color="error" onClick={() => removeEmail(index)}>
+                        <TrashCan color={UNIOESTE_COLORS.primary.p60} />
+                    </Button>
+                </Box>
+            ))}
+            <Button
+                variant="contained"
+                onClick={() => appendEmail({ email: "" })}
+                sx={{ mb: 2 }}
+            >
+                Adicionar Email
+            </Button>
+
+            <Box mt={4}>
+                <Button type="submit" variant="contained" fullWidth>
+                    Cadastrar Médico
+                </Button>
             </Box>
+        </Box>
     );
 };
 
-export default FormularioCadastroMedico
+export default FormularioCadastroMedico;

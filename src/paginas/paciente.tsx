@@ -10,14 +10,14 @@ import {
 } from "@mui/material";
 import { PacienteTipo } from "../tipos/paciente";
 import { usarSexos } from "../hooks/usar-sexos";
-import { usarDDDs } from "../hooks/usar-ddds";
-import { usarDDIs } from "../hooks/usar-ddis";
 import { PageLayout } from "../layout/page-layout";
 import { FONT_WEIGHTS } from "../temas/fontes";
 import EnderecoService from "../servicos/endereco";
-import { usarPacienteMutations } from "../hooks/usar-paciente-mutations";
 import { TrashCan } from "@carbon/icons-react";
 import { UNIOESTE_COLORS } from "../temas/cores";
+import { usarDDDs } from "../hooks/telefone/usar-ddds";
+import { usarDDIs } from "../hooks/telefone/usar-ddis";
+import { usarPacienteMutations } from "../hooks/paciente/usar-paciente-mutations";
 
 const PaginaCriarPaciente: React.FC = () => {
   const { criarPaciente } = usarPacienteMutations()

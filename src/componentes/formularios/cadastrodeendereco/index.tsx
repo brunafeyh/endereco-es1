@@ -9,12 +9,12 @@ import {
   useTheme,
 } from "@mui/material";
 import { usarLogradouro } from "../../../hooks/usar-logradouro";
-import { usarEndereco } from "../../../hooks/usar-endereco";
 import { EnderecoTipo } from "../../../tipos/endereco";
 import { FONT_WEIGHTS } from "../../../temas/fontes";
 import { TITULO } from "../../../paginas/cadastro-endereco";
 import { usarBairros } from "../../../hooks/usar-bairro";
-import { usarCidades } from "../../../hooks/usar-cidades";
+import { usarCidades } from "../../../hooks/cidades/usar-cidades";
+import { usarEndereco } from "../../../hooks/endereco/usar-endereco";
 
 const FormularioEndereco = () => {
   const { data: Logradouros } = usarLogradouro();

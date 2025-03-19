@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { toast } from 'react-toastify'
-import { CidadeTipo } from '../tipos/cidade'
-import CidadeService from '../servicos/cidade'
+import CidadeService from '../../servicos/cidade'
+import { CidadeTipo } from '../../tipos/cidade'
 
 const service = new CidadeService()
 

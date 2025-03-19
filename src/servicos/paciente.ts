@@ -1,5 +1,5 @@
 import apiInstancia from "../compartilhado/api"
-import { PacienteTipo } from "../tipos/paciente";
+import { Paciente, PacienteTipo } from "../tipos/paciente";
 
 class PacienteService {
     private apiUrl: string;
@@ -15,6 +15,12 @@ class PacienteService {
     async buscarPacienteporID(id: number): Promise<PacienteTipo> {
         const response = await apiInstancia.get(`${this.apiUrl}/consultar`, {
             params: { id },
+        })
+        return response.data
+    }
+    async buscarPacienteporCPF(cpf: string): Promise<Paciente> {
+        const response = await apiInstancia.get(`${this.apiUrl}/consultar/cpf`, {
+            params: { cpf },
         })
         return response.data
     }

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import DDDService from "../servicos/telefones/ddd";
+import DDDService from "../../servicos/telefones/ddd";
 
 export const usarDDDs = () => {
   const service = new DDDService();

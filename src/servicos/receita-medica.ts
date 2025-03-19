@@ -1,5 +1,5 @@
 import apiInstancia from "../compartilhado/api"
-import { Receita } from "../tipos/receita-medica";
+import { Receita, ReceitaMedicaList, ReceitaMedicaListOne } from "../tipos/receita-medica";
 
 class ReceitaMedicaService {
     private apiUrl: string;
@@ -10,6 +10,18 @@ class ReceitaMedicaService {
 
     async adicionarReceita(form: Receita): Promise<void> {
         await apiInstancia.post(`${this.apiUrl}/cadastrar`, form);
+    }
+
+    async listarTodasReceitasMedicas(): Promise<ReceitaMedicaList[]> {
+        const response = await apiInstancia.get(`${this.apiUrl}`)
+        return response.data
+    }
+
+    async obterReceitaMedica(numero: number): Promise<ReceitaMedicaListOne> {
+        const response = await apiInstancia.get(`${this.apiUrl}/consultar`, {
+            params: { numero },
+        })
+        return response.data
     }
 }
 

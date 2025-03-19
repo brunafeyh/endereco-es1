@@ -2,7 +2,7 @@ import { FC } from "react";
 import { Medicamento } from "../../../tipos/medicamento";
 import { useForm } from "react-hook-form";
 import { Box, Button, Stack, TextField, Typography } from "@mui/material";
-import { usarMedicamentoMutations } from "../../../hooks/usar-medicamentos";
+import { usarMedicamentoMutations } from "../../../hooks/medicamento/usar-medicamentos-mutations";
 
 export const FormularioMedicamento: FC = () => {
     const {

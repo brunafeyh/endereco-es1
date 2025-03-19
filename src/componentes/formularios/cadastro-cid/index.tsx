@@ -2,7 +2,7 @@ import { FC } from "react";
 import { useForm } from "react-hook-form";
 import { Box, Button, Stack, TextField, Typography } from "@mui/material";
 import { CID } from "../../../tipos/cid";
-import { usarCIDMutations } from "../../../hooks/usar-CID";
+import { usarCIDMutations } from "../../../hooks/CID/usar-CID";
 
 export const FormularioCID: FC = () => {
     const {

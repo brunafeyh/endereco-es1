@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { toast } from 'react-toastify'
-import EnderecoService from '../servicos/endereco'
-import { EnderecoTipo } from '../tipos/endereco'
+import EnderecoService from '../../servicos/endereco'
+import { EnderecoTipo } from '../../tipos/endereco'
 
 const service = new EnderecoService()
 

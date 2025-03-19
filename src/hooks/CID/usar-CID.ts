@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'react-toastify'
-import { CIDService } from '../servicos/CID';
-import { CID } from '../tipos/cid';
+import { CIDService } from '../../servicos/CID';
+import { CID } from '../../tipos/cid';
 
 const service = new CIDService()
 

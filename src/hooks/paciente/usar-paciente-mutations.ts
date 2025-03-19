@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'react-toastify'
-import PacienteService from '../servicos/paciente';
-import { PacienteTipo } from '../tipos/paciente';
+import PacienteService from '../../servicos/paciente'
+import { PacienteTipo } from '../../tipos/paciente'
 
 const service = new PacienteService()
 

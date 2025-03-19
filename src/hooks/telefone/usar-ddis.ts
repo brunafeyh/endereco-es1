@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import DDIService from "../servicos/telefones/ddi";
+import DDIService from "../../servicos/telefones/ddi";
 
 export const usarDDIs = () => {
   const service = new DDIService();
