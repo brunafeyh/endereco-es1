@@ -13,7 +13,7 @@ class PacienteService {
     }
 
     async buscarPacienteporID(id: number): Promise<PacienteTipo> {
-        const response = await apiInstancia.get(`${this.apiUrl}/consultar`, {
+        const response = await apiInstancia.get(`${this.apiUrl}/consultar/id`, {
             params: { id },
         })
         return response.data

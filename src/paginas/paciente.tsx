@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm, useFieldArray, Controller } from "react-hook-form";
 import {
   Box,
@@ -18,9 +18,11 @@ import { UNIOESTE_COLORS } from "../temas/cores";
 import { usarDDDs } from "../hooks/telefone/usar-ddds";
 import { usarDDIs } from "../hooks/telefone/usar-ddis";
 import { usarPacienteMutations } from "../hooks/paciente/usar-paciente-mutations";
+import { useMutation } from "@tanstack/react-query";
+import { EnderecoTipo } from "../tipos/endereco";
 
 const PaginaCriarPaciente: React.FC = () => {
-  const { criarPaciente } = usarPacienteMutations()
+  const { criarPaciente } = usarPacienteMutations();
   const theme = useTheme();
   const {
     register,
@@ -39,6 +41,7 @@ const PaginaCriarPaciente: React.FC = () => {
     control,
     name: "telefones",
   });
+
   const {
     fields: emailFields,
     append: appendEmail,
@@ -52,6 +55,27 @@ const PaginaCriarPaciente: React.FC = () => {
   const { data: ddds } = usarDDDs();
   const { data: ddis } = usarDDIs();
 
+  const [cep, setCep] = useState<string>("");
+  const [enderecos, setEnderecos] = useState<EnderecoTipo[]>([]);
+
+  const service = new EnderecoService();
+
+  const mutation = useMutation<EnderecoTipo[], Error, string>({
+    mutationFn: (cep) => service.listarEnderecosCEP(cep),
+    onSuccess: (data) => {
+      setEnderecos(data);
+    },
+    onError: (error) => {
+      console.error("Erro ao buscar endereços:", error);
+      setEnderecos([]);
+    },
+  });
+
+  const handleBuscar = () => {
+    if (!cep) return;
+    mutation.mutate(cep);
+  };
+
   const handleSexoChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -63,27 +87,19 @@ const PaginaCriarPaciente: React.FC = () => {
     }
   };
 
-  const handleEnderecoIdChange = async (
-    event: React.FocusEvent<HTMLInputElement>
-  ) => {
-    const idInput = event.target.value;
-    if (!idInput) return;
-    const enderecoId = parseInt(idInput, 10);
-    if (isNaN(enderecoId)) return;
-
-    try {
-      const enderecoService = new EnderecoService();
-      let endereco = await enderecoService.obterEnderecoID(enderecoId);
-      setValue("enderecoEspecifico.endereco", endereco);
-    } catch (error) {
-      console.error("Erro ao buscar endereço:", error);
+  // Função para armazenar o id do endereço selecionado
+  const handleEnderecoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const enderecoId = event.target.value;
+    const selectedEndereco = enderecos.find(end => end.id === parseInt(enderecoId));
+    if (selectedEndereco) {
+      setValue("enderecoEspecifico.endereco", selectedEndereco); // Armazenando o endereço selecionado
     }
-  }
+  };
 
   const onSubmit = (data: PacienteTipo) => {
     console.log("Paciente cadastrado:", data);
     criarPaciente.mutate(data);
-  }
+  };
 
   const { onChange: sexoOnChange, ...sexoRegister } = register("sexo.sigla");
 
@@ -135,14 +151,41 @@ const PaginaCriarPaciente: React.FC = () => {
           error={!!errors.enderecoEspecifico?.complemento}
           helperText={errors.enderecoEspecifico?.complemento?.message}
         />
-        <TextField
-          label="ID do Endereço"
-          fullWidth
-          variant="filled"
-          sx={{ mb: 2 }}
-          onBlur={handleEnderecoIdChange}
-          helperText="Digite o ID do endereço e saia do campo para buscar"
-        />
+
+        {/* CEP */}
+        <Box display="flex" gap={2} mb={2}>
+          <TextField
+            label="CEP"
+            variant="filled"
+            value={cep}
+            onChange={(e) => setCep(e.target.value)}
+          />
+          <Button
+            variant="contained"
+            onClick={handleBuscar}
+            disabled={!cep || mutation.isPending}
+          >
+            Buscar
+          </Button>
+        </Box>
+
+        {/* Select para escolher o endereço */}
+        {enderecos.length > 0 && (
+          <TextField
+            select
+            label="Selecione o Endereço"
+            fullWidth
+            variant="filled"
+            sx={{ mb: 2 }}
+            onChange={handleEnderecoChange}
+          >
+            {enderecos.map((endereco) => (
+              <MenuItem key={endereco.id} value={endereco.id}>
+                {`${endereco.logradouro.nome}, ${endereco.bairro.nome} - ${endereco.cidade.nome}`}
+              </MenuItem>
+            ))}
+          </TextField>
+        )}
 
         <Typography fontSize={15} fontWeight={FONT_WEIGHTS.light} mt={2} mb={1}>
           Sexo
@@ -298,4 +341,4 @@ const PaginaCriarPaciente: React.FC = () => {
   );
 };
 
-export default PaginaCriarPaciente
+export default PaginaCriarPaciente;
