@@ -1,29 +1,24 @@
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Box, Button, TextField, Typography, useTheme, Paper } from "@mui/material";
 import { PageLayout } from "../layout/page-layout";
 import { FONT_WEIGHTS } from "../temas/fontes";
-import { toast } from "react-toastify";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { usarReceitaMedicaPorNumero } from "../hooks/receita-medica/usar-receita-medica-por-numero";
-import { usarIA } from "../hooks/ia";
-import { PacienteTipo } from "../tipos/paciente";
 import PacienteService from "../servicos/paciente";
-import { ReceitaMedicaListOne } from "../tipos/receita-medica";
 import IAService from "../servicos/ia";
 import ReceitaMedicaService from "../servicos/receita-medica";
 
 // Estilos personalizados para o chat
 const chatStyles = {
     chatContainer: {
-        maxWidth: "600px",
+        width: 1100,
         margin: "auto",
         padding: "20px",
         borderRadius: "10px",
         border: "1px solid #ddd",
+        ml: 30,
         boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
         backgroundColor: "#f9f9f9",
-        height: "400px",
+        height: 800,
         overflowY: "scroll",
     },
     messageBubbleUser: {
@@ -56,7 +51,7 @@ export const IA = () => {
     const { register, handleSubmit, reset } = useForm();
     const [userInput, setUserInput] = useState<string>(""); // String de entrada do usuário
     const [chatMessages, setChatMessages] = useState<any[]>([]); // Mensagens do chat
-
+    const [errorMessage, setErrorMessage] = useState<string>(""); // Mensagem de erro
 
     const handleChatSubmit = async (data: any) => {
         console.log(userInput)
@@ -67,52 +62,95 @@ export const IA = () => {
             { sender: "user", message: userInput }
         ]);
 
+        
+            const response = await iaService.obterRespostadaIA(userInput);
+            const intencao = response.intencao;
+            const identificador = response.id;
 
-        const response = await iaService.obterRespostadaIA(userInput)
-
-        const intencao = response.intencao
-        const identificador = response.id
 
         if (intencao === 'CONSULTAR_PACIENTE_POR_ID') {
-            const response = await pacienteService.buscarPacienteporID(identificador)
-            console.log(response)
+            const paciente = await pacienteService.buscarPacienteporID(identificador);
+
+            const pacienteInfo = `
+            Nome: ${paciente.nome}
+            CPF: ${paciente.cpf.cpf}
+            Telefone(s): ${paciente.telefones.map(tel => tel.numero).join(", ")}
+            Email(s): ${paciente.emails.map(email => email.email).join(", ")}
+            Sexo: ${paciente.sexo.nome}
+            Endereco: ${paciente.enderecoEspecifico.endereco.cep}
+        `;
+        
+            setChatMessages((prevMessages) => [
+                ...prevMessages,
+                { sender: "bot", message: `Paciente encontrado:\n${pacienteInfo}` }
+            ]);
+        } else if (intencao === 'CONSULTAR_RECEITA_MEDICA_POR_NUMERO') {
+            const receita = await receitaMedicaService.obterReceitaMedica(identificador);
+
+            const receitaInfo = `
+                Número da Receita: ${receita.numero}
+                Data de Emissão: ${receita.dataEmissao}
+                Médico: ${receita.medico.nome} (CRM: ${receita.medico.crm})
+                Diagnóstico (CID): ${receita.diagnosticoCID.codigo} - ${receita.diagnosticoCID.descricao}
+                Medicamentos Prescritos: ${receita.medicamentoReceitaMedicas.map(med => `${med.medicamento.nome} (${med.posologia})`).join(", ")}
+                Paciente: ${receita.paciente.nome}
+            `;
+
+            setChatMessages((prevMessages) => [
+                ...prevMessages,
+                { sender: "bot", message: `Receita médica encontrada:\n${receitaInfo}` }
+            ]);
+        } else if(intencao === 'ERRO') {
+            setChatMessages((prevMessages) => [
+                ...prevMessages,
+                { sender: "bot", message: "Desculpe, erro." }
+            ]);
+        }
+        else{
+            setChatMessages((prevMessages) => [
+                ...prevMessages,
+                { sender: "bot", message: "Desculpe, não entendi sua solicitação." }
+            ]);
         }
 
-        else if (intencao === 'CONSULTAR_RECEITA_MEDICA_POR_NUMERO') {
-            await receitaMedicaService.obterReceitaMedica(identificador)
-            console.log(response)
-        }
-        
+        // Limpar erro anterior
+        setErrorMessage("");
 };
 
-return (
-    <PageLayout title="Inteligência Artificial">
-        <Box marginLeft={30} mt={4} sx={chatStyles.chatContainer}>
-            <Typography mb={2} fontSize={theme.spacing(2.5)} fontWeight={FONT_WEIGHTS.light}>
-                {TITULO}
-            </Typography>
-            <Box sx={{ marginBottom: "20px" }}>
-                {chatMessages.map((msg, index) => (
-                    <Paper key={index} sx={msg.sender === "user" ? chatStyles.messageBubbleUser : chatStyles.messageBubbleBot}>
-                        {msg.message}
-                    </Paper>
-                ))}
-            </Box>
+    return (
+        <PageLayout title="Inteligência Artificial">
+            <Box mt={4} sx={chatStyles.chatContainer}>
+                <Typography mb={2} fontSize={theme.spacing(2.5)} fontWeight={FONT_WEIGHTS.light}>
+                    {TITULO}
+                </Typography>
+                <Box sx={{ marginBottom: "20px" }}>
+                    {chatMessages.map((msg, index) => (
+                        <Paper key={index} sx={msg.sender === "user" ? chatStyles.messageBubbleUser : chatStyles.messageBubbleBot}>
+                            {msg.message}
+                        </Paper>
+                    ))}
+                </Box>
 
-            <form onSubmit={handleSubmit(handleChatSubmit)}>
-                <TextField
-                    label="Digite uma string"
-                    fullWidth
-                    variant="filled"
-                    {...register("userInput")}
-                    onChange={(e) => setUserInput(e.target.value)}
-                    sx={{ mb: 2 }}
-                />
-                <Button variant="contained" type="submit" disabled={!userInput}>
-                    Enviar para IA
-                </Button>
-            </form>
-        </Box>
-    </PageLayout>
-);
+                {errorMessage && (
+                    <Box sx={{ marginBottom: "20px", color: "red", fontWeight: "bold" }}>
+                        {errorMessage}
+                    </Box>
+                )}
+
+                <form onSubmit={handleSubmit(handleChatSubmit)}>
+                    <TextField
+                        label="Digite uma string"
+                        fullWidth
+                        variant="filled"
+                        {...register("userInput")}
+                        onChange={(e) => setUserInput(e.target.value)}
+                        sx={{ mb: 2 }}
+                    />
+                    <Button variant="contained" type="submit" disabled={!userInput}>
+                        Enviar para IA
+                    </Button>
+                </form>
+            </Box>
+        </PageLayout>
+    );
 };
